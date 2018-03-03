@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body style="text-align: center">
+<div id="container"></div>
+<pre id="output"></pre>
+<script>
+    let output = document.querySelector('#output');
+    let container = document.querySelector('#container');
+    output.setAttribute('style', 'display: none');
+
+    let query = getQueryParams(document.location.search);
+
+    if (query.error_code) {
+        output.innerText = JSON.stringify(query, null, 3);
+        output.setAttribute('style', 'display: block');
+    }
+
+    getUsers()
+        .then(users => {
+            let inputs = '';
+            users.forEach(user => {
+                inputs += '<div class="user_input"><b>User: </b>' + user.username
+                    + ' <br><b>Password:</b> ' + user.password
+                    + ' <br><b>Email:</b> ' + user.scopes.email.email
+                    + '<br><br><a class="btn btn-primary btn-detached" href="/openid/generate_code/' + user.username + '">log in</a></div>';
+            });
+
+            container.innerHTML = inputs;
+        });
+
+    function getQueryParams(qs) {
+        qs = qs.split('+').join(' ');
+
+        let params = {};
+        let tokens;
+        let regex = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = regex.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+    }
+
+    function getUsers() {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                cache: false,
+                url: '/helper/users',
+                type: 'GET',
+                success: resolve,
+                error: reject
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+body {
+    padding: 10px;
+}
+
+#output {
+    height: 50%;
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.btn {
+    color: #fff;
+    border-radius: 4px;
+    padding: 10px;
+    border-width: 0;
+    width: 150px;
+    font-size: 11px;
+}
+
+.btn-primary {
+    background-color: #1e90ff;
+}
+
+.btn-success {
+    background-color: #008000;
+}
+
+.btn-danger {
+    background-color: #ff0000;
+}
+
+.btn-warning {
+    background-color: #ff7400;
+}
+
+.btn-lg {
+    font-size: 2em;
+    font-family: sans-serif;
+}
+
+.text_input {
+    width: 95%;
+    padding: 4px;
+    margin: 3px;
+    font-weight: 500;
+    font-size: 13px;
+    background-color: #ffe;
+}
+
+.text_input_small {
+    width: 70%;
+    padding: 4px;
+    margin: 5px;
+    font-weight: 500;
+    font-size: 2em;
+}
+
+.user_input {
+    padding: 20px;
+    margin: 10px;
+    background-color: #ddd;
+    text-align: left;
+    position: relative;
+}

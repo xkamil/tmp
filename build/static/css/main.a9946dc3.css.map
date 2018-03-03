@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA,OACI,qBAAyB,CAG7B,GACI,eAAiB","file":"static/css/main.a9946dc3.css","sourcesContent":[".dirty {\r\n    background-color: yellow;\r\n}\r\n\r\nhr {\r\n    margin-top: 50px;\r\n}\n\n\n// WEBPACK FOOTER //\n// ./src/index.css"],"sourceRoot":""}

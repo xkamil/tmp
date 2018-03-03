@@ -1,0 +1,12 @@
+{
+  "access_token_expiration_time": 40,
+  "refresh_token_expiration_time": 60,
+  "client_id": "bc10ca8d-ac22-4c94-9b6a-d64949864fbf",
+  "client_secret": "3-UZLSbd3KkowE0NsF78IkhWmico8Uit8wTIh5TcF7UAU2cxYfav7IJwvn5EnU0HpODz70QMdEPoFcu4I-UZYw",
+  "redirect_uris": [
+    "http://eng-killerbees04:3000/openid/redirect_callback_example",
+    "http://127.0.0.1:3000/openid/redirect_callback_example",
+    "pega://com.pega.hybridclient"
+  ],
+  "authorization_code_expiration_time": 60
+}

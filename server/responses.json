@@ -1,0 +1,193 @@
+{
+  "INVALID_GRANT": {
+    "code": 400,
+    "body": {
+      "error": "invalid_grant",
+      "error_description": "invalid_grant: Grant name is not valid as per the Oauth Specification"
+    }
+  },
+  "MISSING_PARAM_GRANT_TYPE": {
+    "code": 400,
+    "body": {
+      "error": "invalid_request",
+      "error_description": "The param grant_type is missing or not a valid grant_type"
+    }
+  },
+  "MISSING_PARAM_CLIENT_ID": {
+    "code": 400,
+    "body": {
+      "error": "invalid_request",
+      "error_description": "OAuth Client Authentication Failure because client credential is missing"
+    }
+  },
+  "MISSING_PARAM_CLIENT_SECRET": {
+    "code": 401,
+    "body": {
+      "error": "invalid_client",
+      "error_description": "invalid_client: client_secret is must "
+    }
+  },
+  "MISSING_PARAM_USERNAME": {
+    "code": 400,
+    "body": {
+      "error": "invalid_request",
+      "error_description": "OAuth Client Authentication Failure because username parameter is missing in the request"
+    }
+  },
+  "MISSING_PARAM_PASSWORD": {
+    "code": 400,
+    "body": {
+      "error": "invalid_request",
+      "error_description": "OAuth Client Authentication Failure because password parameter is missing in the request"
+    }
+  },
+  "INVALID_CLIENT_ID": {
+    "code": 400,
+    "body": {
+      "error": "invalid_client",
+      "error_description": "invalid_client: YOUR_CLIENT_ID  client_id is invalid"
+    }
+  },
+  "INVALID_CLIENT_SECRET": {
+    "code": 401,
+    "body": {
+      "error": "invalid_client",
+      "error_description": "invalid_client: input credentials are not valid"
+    }
+  },
+  "INVALID_CREDENTIALS": {
+    "code": 400,
+    "body": {
+      "error": "invalid_grant",
+      "error_description": "invalid_grant: user credentials are not valid"
+    }
+  },
+  "SUCCESSFUL_PASSWORD_GRANT": {
+    "code": 200,
+    "body": {
+      "access_token": "",
+      "token_type": "bearer",
+      "expires_in": 0,
+      "refresh_token": ""
+    }
+  },
+  "SUCCESSFUL_REFRESH_TOKEN_GRANT": {
+    "code": 200,
+    "body": {
+      "access_token": "",
+      "token_type": "bearer",
+      "expires_in": 0
+    }
+  },
+  "AUTHENTICATION_REQUIRED": {
+    "code": 401,
+    "body": {
+      "error": "oauth authentication required"
+    }
+  },
+  "TOKEN_INFO": {
+    "code": 200,
+    "body": {
+      "scope": [],
+      "expires_in": 0,
+      "user_id": ""
+    }
+  },
+  "USER_INFO": {
+    "code": 200,
+    "body": {}
+  },
+  "EXPIRED_REFRESH_TOKEN": {
+    "code": 400,
+    "body": {
+      "error": "invalid_grant",
+      "error_description": "invalid_grant: refresh code is expired"
+    }
+  },
+  "EXPIRED_ACCESS_TOKEN": {
+    "code": 401,
+    "body": {
+      "error": "oauth authentication required"
+    },
+    "headers": [
+      {
+        "key": "www-authenticate",
+        "value": "error=OAuth bearer token required. Token has expired"
+      }
+    ]
+  },
+  "INVALID_TOKEN_DATA": {
+    "code": 401,
+    "body": {
+      "error": "oauth authentication required"
+    },
+    "headers": [
+      {
+        "key": "www-authenticate",
+        "value": "error=OAuth bearer token required. Invalid token data"
+      }
+    ]
+  },
+  "MISSING_REFRESH_TOKEN": {
+    "code": 400,
+    "body": {}
+  },
+  "INVALID_REFRESH_TOKEN": {
+    "code": 400,
+    "body": {
+      "error": "invalid_request",
+      "error_description": "invalid token"
+    }
+  },
+  "AUTH_CODE_INVALID_CLIENT_ID": {
+    "query": {
+      "error_code": "invalid_client",
+      "description": " Invalid value for 'client_id' parameter."
+    }
+  },
+  "AUTH_CODE_INVALID_REDIRECT_URI": {
+    "query": {
+      "error_code": "invalid_client",
+      "description": "The 'redirect_uri' parameter must be an absolute URI that is whitelisted in the client app settings."
+    }
+  },
+  "AUTH_CODE_REDIRECT_URI_NOT_MATCH": {
+    "code": 400,
+    "body": {
+      "error": "invalid_grant",
+      "error_description": "The 'redirect_uri' does not match the redirection URI used in the authorization request."
+    }
+  },
+  "AUTH_CODE_INVALID_RESPONSE_TYPE": {
+    "query": {
+      "error": "unsupported_response_type",
+      "error_description": "The response type is not supported by the authorization server. Configured response types: [code]."
+    }
+  },
+  "AUTH_CODE_INVALID_SCOPES": {
+    "query": {
+      "error": "invalid_scope",
+      "error_description": "One or more scopes are not configured for the authorization server resource."
+    }
+  },
+  "AUTH_CODE_UNSUPPORTED_CHALLENGE_METHOD": {
+    "query": {
+      "error": "invalid_request",
+      "error_description": "PKCE code challenge method is not supported. Valid values: [S256]"
+    }
+  },
+  "AUTH_CODE_INVALID_OR_EXPIRED_CODE": {
+    "code": 400,
+    "body": {
+      "error": "invalid_grant",
+      "error_description": "The authorization code is invalid or has expired."
+    }
+  },
+  "AUTH_CODE_INVALID_PKCE": {
+    "code": 400,
+    "body": {
+      "error": "invalid_grant",
+      "error_description": "PKCE verification failed."
+    }
+  }
+}

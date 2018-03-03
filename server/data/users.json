@@ -1,0 +1,36 @@
+{
+  "admin": {
+    "password": "pegasys1+",
+    "scopes": {
+      "none": {
+        "sub": "d053cc8f0e9d3347dea7d053cc8f0e9d"
+      },
+      "email": {
+        "email": "Raghuram.Ettaboina@in.pega.com"
+      },
+      "profile": {
+        "website": "Raghuram.Ettaboina@in.pega.com",
+        "nickname": "admin",
+        "preferred_username": "admin",
+        "family_name": "admin"
+      }
+    }
+  },
+  "kamil": {
+    "password": "pegasys1+",
+    "scopes": {
+      "none": {
+        "sub": "d053cc8f0e9d3347dea7d053cc8f0e9d"
+      },
+      "email": {
+        "email": "kamil.wrobel@pega.com"
+      },
+      "profile": {
+        "website": "kamil.wrobel@pega.com",
+        "nickname": "kamil",
+        "preferred_username": "kamil",
+        "family_name": "kamil"
+      }
+    }
+  }
+}
