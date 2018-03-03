@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body style="text-align: center">
+<div id="container"></div>
+<pre id="output"></pre>
+<script>
+    var output = document.querySelector('#output');
+    var container = document.querySelector('#container');
+    output.setAttribute('style', 'display: none');
+
+    function getQueryParams(qs) {
+        qs = qs.split('+').join(' ');
+
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+    }
+
+    var query = getQueryParams(document.location.search);
+
+    if (query.error_code) {
+        output.innerText = JSON.stringify(query, null, 3);
+        output.setAttribute('style', 'display: block');
+    }
+
+
+    getUsers().then(function (data) {
+        var inputs = '';
+        Object.getOwnPropertyNames(data).forEach(function (user) {
+            var input = '<div class="user_input"><b>User: </b>' + user
+                + ' <br><b>Password:</b> ' + data[user].password
+                + ' <br><b>Email:</b> ' + data[user].scopes.email.email
+                + '<br><br><a class="btn btn-primary btn-detached" href="/openid/generate_code/' + user + '">log in</a></div>';
+            inputs += input;
+        });
+
+        container.innerHTML = inputs;
+    });
+
+    function getUsers() {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                cache: false,
+                url: '/helper/users',
+                type: 'GET',
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function () {
+                    reject();
+                }
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

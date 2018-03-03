@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<p>
+    <button id="get_users" class="btn btn-primary">Get users</button>
+</p>
+<p>
+    <button id="get_access_tokens" class="btn btn-primary">Get access tokens</button>
+    <button id="get_refresh_tokens" class="btn btn-primary">Get refresh tokens</button>
+    <button id="expire_access_tokens" class="btn btn-warning">Expire all access tokens</button>
+    <button id="expire_refresh_tokens" class="btn btn-warning">Expire all refresh tokens</button>
+    <button id="expire_all_tokens" class="btn btn-warning">Expire all tokens</button>
+    <button id="clear_server" class="btn btn-warning">Remove all tokens</button>
+</p>
+<p>
+    <button id="get_server_logs" class="btn btn-primary">Get request logs</button>
+    <button id="clear_request_logs" class="btn btn-warning">Clear request logs</button>
+</p>
+
+<h2>Console <button id="clear_console" class="">clear</button></h2>
+<pre id="output"></pre>
+
+
+<h2>Server configuration</h2>
+<p style="border: 2px solid #000; padding: 5px">
+    <b>Access token expiration time: </b><br>
+    <input type="text" id="access_token_exp" class="text_input" onkeypress='return event.charCode >= 48 && event.charCode <= 57'/><br>
+    <b>Refresh token expiration time:</b> <br>
+    <input type="text" id="refresh_token_exp" class="text_input" onkeypress='return event.charCode >= 48 && event.charCode <= 57'/><br>
+    <b>Client id:</b> <br>
+    <input type="text" id="client_id" class="text_input"/><br>
+    <b>Client secret:</b> <br>
+    <input type="text" id="client_secret" class="text_input"/><br><br>
+
+    <button id="get_configuration" class="btn btn-primary">Get current</button>
+    <button id="change_configuration" class="btn btn-warning">Save changes</button>
+    <button id="reset_configuration" class="btn btn-warning">Reset to default</button>
+</p>
+
+<h2>Oauth routes</h2>
+<ul>
+    <li>/oauth/token</li>
+    <li>/oauth/userinfo</li>
+    <li>/oauth/tokeninfo</li>
+</ul>
+</body>
+
+<script>
+    var serverUrl = document.location.href.replace(/\/.*/, '');
+    var output = $('#output');
+
+    $("#get_users").click(function () {
+        request($(this), '/helper/users')
+    });
+
+    $("#get_configuration").click(function () {
+        request($(this), '/helper/configuration', null, function (data) {
+            $('#access_token_exp').val(data.access_token_expiration_time);
+            $('#refresh_token_exp').val(data.refresh_token_expiration_time);
+            $('#client_id').val(data.client_id);
+            $('#client_secret').val(data.client_secret);
+        })
+    });
+
+    $("#change_configuration").click(function () {
+        var accessTokenExpirationTime = parseInt($('#access_token_exp').val());
+        var refreshTokenExpirationTime = parseInt($('#refresh_token_exp').val());
+        var clientId = $('#client_id').val();
+        var clientSecret = $('#client_secret').val();
+
+        var newConfiguration = {
+            access_token_expiration_time: accessTokenExpirationTime,
+            refresh_token_expiration_time: refreshTokenExpirationTime,
+            client_id: clientId,
+            client_secret: clientSecret
+        };
+
+        request($(this), '/helper/configuration', JSON.stringify(newConfiguration), function () {})
+    });
+
+    $("#reset_configuration").click(function () {
+        request($(this), '/helper/resetConfiguration', null, function (data) {
+            $('#access_token_exp').val(data.access_token_expiration_time);
+            $('#refresh_token_exp').val(data.refresh_token_expiration_time);
+            $('#client_id').val(data.client_id);
+            $('#client_secret').val(data.client_secret);
+        });
+    });
+
+    $("#clear_console").click(function () {
+       output.text('');
+    });
+
+    $("#clear_server").click(function () {
+        request($(this), '/helper/clear')
+    });
+
+    $("#clear_request_logs").click(function () {
+        request($(this), '/helper/clearRequestsLogs')
+    });
+
+    $("#get_access_tokens").click(function () {
+        request($(this), '/helper/access_tokens')
+    });
+
+    $("#get_refresh_tokens").click(function () {
+        request($(this), '/helper/refresh_tokens')
+    });
+
+    $("#expire_all_tokens").click(function () {
+        request($(this), '/helper/expire_all_tokens')
+    });
+
+    $("#expire_access_tokens").click(function () {
+        request($(this), '/helper/expire_all_access_tokens')
+    });
+
+    $("#expire_refresh_tokens").click(function () {
+        request($(this), '/helper/expire_all_refresh_tokens')
+    });
+
+    $("#get_server_logs").click(function () {
+        request($(this), '/helper/logs')
+    });
+
+    function request(element, path, requestData, successCallback) {
+        var defaultClass = element.attr('class');
+        element.attr("disabled", true);
+
+        $.ajax({
+            cache: false,
+            url: serverUrl + path,
+            type: requestData ? 'POST' : 'GET',
+            contentType: "application/json; charset=utf-8",
+            data: requestData,
+            success: function (data) {
+                if (successCallback) {
+                    successCallback(data)
+                } else {
+                    try {
+                        data = JSON.stringify(data, null, 2)
+                    } catch (e) {
+                    }
+
+                    output.text(data);
+                }
+                element.attr('class', 'btn btn-success');
+                setTimeout(function () {
+                    element.attr('class', defaultClass);
+                    element.attr("disabled", false);
+                }, 500)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+
+                output.html(thrownError + xhr.responseText);
+                element.attr('class', 'btn btn-danger');
+                setTimeout(function () {
+                    element.attr('class', defaultClass);
+                    element.attr("disabled", false);
+                }, 500)
+            }
+        });
+    }
+
+</script>
+</html>
