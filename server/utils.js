@@ -52,7 +52,7 @@ function createAccessToken(currentDate, grantType, userId, scope) {
         scope: scope || []
     };
 
-    return new Token(token).save();
+    return new Token(token).save().then(tokenInfo => tokenInfo.token);
 }
 
 function createRefreshToken(currentDate, grantType, userId, scope) {
@@ -65,7 +65,7 @@ function createRefreshToken(currentDate, grantType, userId, scope) {
         scope: scope || []
     };
 
-    return new Token(token).save();
+    return new Token(token).save().then(tokenInfo => tokenInfo.token);
 }
 
 function expireTokens(type) {

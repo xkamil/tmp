@@ -4,11 +4,9 @@ import {
     expireAccessTokens, expireAllTokens, expireRefreshTokens, fetchAccessTokens,
     fetchRefreshTokens, removeAllTokens
 } from "../../actions/tokensActions";
-import {Link, Route} from "react-router-dom";
-import AccessTokens from "./AccessTokens";
-import RefreshTokens from "./RefreshTokens";
 import ButtonBar from "../../components/ButtonBar";
 import {formatUnderscored} from "../../utils/formatters";
+import SmartTable from "../../components/SmartTable/SmartTable";
 
 const REFRESH_INTERVAL = 1000;
 
@@ -19,12 +17,13 @@ class Tokens extends Component {
         super(props);
 
         this.state = {
-            autoRefresh: false
+            autoRefresh: true
         }
     }
 
     componentDidMount() {
         this.handleFetchTokens();
+        this.autoRefresh(this.state.autoRefresh);
     }
 
     componentWillUnmount(){
@@ -36,26 +35,19 @@ class Tokens extends Component {
         this.props.fetchRefreshTokens();
     };
 
-    isAccessTokensSection = () => {
-        return this.props.location.pathname.indexOf('access_tokens') !== -1;
-    };
-
-    isRefreshTokensSection = () => {
-        return this.props.location.pathname.indexOf('refresh_tokens') !== -1;
-    };
-
     handleToggleAutoRefresh = (e) => {
-        const checked = e.target.checked;
+        const autoRefresh = e.target.checked;
+        this.setState({autoRefresh});
+        this.autoRefresh(autoRefresh);
+    };
 
-        if (checked) {
+    autoRefresh = (enabled) => {
+        if (enabled) {
             this.interval = setInterval(() => {
                 this.handleFetchTokens();
             }, REFRESH_INTERVAL);
-
-            this.setState({autoRefresh: true})
         }else{
             clearInterval(this.interval);
-            this.setState({autoRefresh: false})
         }
     };
 
@@ -69,17 +61,7 @@ class Tokens extends Component {
                 <h1>{formatUnderscored(name)}</h1>
                 <hr/>
 
-                <Link to="/tokens/access_tokens" className="btn btn-dark">Access Tokens</Link>
-                <Link to="/tokens/refresh_tokens" className="btn btn-dark">Refresh Tokens</Link>
-
                 <ButtonBar>
-                    {this.isAccessTokensSection() &&
-                    <button className="btn btn-warning" onClick={expireAccessTokens}>Expire access tokens</button>}
-
-                    {this.isRefreshTokensSection() &&
-                    <button className="btn btn-warning" onClick={expireRefreshTokens}>Expire refresh tokens</button>}
-
-                    &nbsp;&nbsp;
 
                     <div style={{textAlign: 'center', marginRight: 10}}>
                         <label style={{margin: 9}} htmlFor="auto_refresh">Auto refresh </label>
@@ -91,13 +73,16 @@ class Tokens extends Component {
                     </div>
 
                     <button className="btn btn-primary" disabled={this.state.autoRefresh} onClick={this.handleFetchTokens}>Refresh</button>
+                    <button className="btn btn-warning" onClick={expireAccessTokens}>Expire access tokens</button>
+                    <button className="btn btn-warning" onClick={expireRefreshTokens}>Expire refresh tokens</button>
                     <button className="btn btn-warning" onClick={expireAllTokens}>Expire all</button>
                     <button className="btn btn-danger" onClick={removeAllTokens}>Remove all</button>
 
                 </ButtonBar>
 
-                <Route exact path="/tokens/access_tokens" component={AccessTokens}/>
-                <Route exact path="/tokens/refresh_tokens" component={RefreshTokens}/>
+                <div>
+                    <SmartTable data={this.props.tokens} headers={['type','token','user_id','scope','created_at','expires']}/>
+                </div>
 
             </div>
         );
@@ -106,7 +91,8 @@ class Tokens extends Component {
 
 const mapStateToProps = (state) => ({
     access_tokens: state.tokens.access_tokens,
-    refresh_tokens: state.tokens.refresh_tokens
+    refresh_tokens: state.tokens.refresh_tokens,
+    tokens: [...state.tokens.refresh_tokens, ...state.tokens.access_tokens]
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -115,7 +101,7 @@ const mapDispatchToProps = (dispatch) => ({
     expireAccessTokens: () => dispatch(expireAccessTokens()),
     expireRefreshTokens: () => dispatch(expireRefreshTokens()),
     removeAllTokens: () => dispatch(removeAllTokens()),
-    expireAllTokens: () => dispatch(expireAllTokens())
+    expireAllTokens: () => dispatch(expireAllTokens()),
 });
 
 Tokens = connect(mapStateToProps, mapDispatchToProps)(Tokens);

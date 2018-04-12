@@ -5,30 +5,32 @@ import React, {Component} from 'react';
 class TableRow extends Component {
 
     render() {
-        const {record} = this.props;
-        const propertyNames = Object.getOwnPropertyNames(record);
-        const maxWidth = window.innerWidth / propertyNames.length * 1.5;
+        const {items} = this.props;
+        const maxWidth = window.innerWidth / items.length * 1.5;
 
         return (
             <tr>
-                {propertyNames
-                    .map((item, idx) => <td style={{maxWidth, overflowWrap: 'break-word'}} key={idx}>{transformData(record[item])}</td>)}
+                {items.map((item, idx) =>
+                    <td
+                        style={{maxWidth, overflowWrap: 'break-word'}}
+                        key={idx}>{transformData(item)}</td>
+                )}
             </tr>
         )
     }
 }
 
 TableRow.propTypes = {
-    record: PropTypes.object.isRequired
+    items: PropTypes.array.isRequired
 };
 
-function transformData(obj) {
-    if (typeof obj === 'object') {
+function transformData(data) {
+    if (typeof data === 'object') {
         return <CollapsableContent>
-            <pre>{JSON.stringify(obj, null, 2)}</pre>
+            <pre>{JSON.stringify(data, null, 2)}</pre>
         </CollapsableContent>;
     } else {
-        return obj;
+        return data;
     }
 }
 

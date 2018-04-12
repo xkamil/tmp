@@ -16,7 +16,7 @@ class Users extends Component {
             <div>
                 <h1>List of users</h1>
                 <hr/>
-                <SmartTable data={users}/>
+                <SmartTable data={users} headers={['username','password','scopes']}/>
                 <hr/>
             </div>
         );

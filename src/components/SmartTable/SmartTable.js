@@ -12,15 +12,10 @@ class SmartTable extends Component {
 
         this.state = {
             data: [],
-            headers: [],
             filters: {},
             order: -1,
             orderBy: 'time'
         };
-    }
-
-    componentDidMount() {
-        this.updateState(this.props.data);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -29,17 +24,8 @@ class SmartTable extends Component {
         }
     }
 
-    updateState(rawData) {
-        let headers = this.extractHeaders(rawData);
-        this.setState({headers, rawData})
-    }
-
-    extractHeaders(data) {
-        let headers = [];
-        if (data && data.length > 0) {
-            Object.getOwnPropertyNames(data[0]).forEach(header => headers.push(header));
-        }
-        return headers;
+    updateState(data) {
+        this.setState({data})
     }
 
     applyFilters(data) {
@@ -47,7 +33,7 @@ class SmartTable extends Component {
 
         return data.filter(record => {
             for (let i = 0; i < filterNames.length; i++) {
-                if (JSON.stringify(record[filterNames[i]]).indexOf(this.state.filters[filterNames[i]]) === -1) {
+                if (record[filterNames[i]] && JSON.stringify(record[filterNames[i]]).indexOf(this.state.filters[filterNames[i]]) === -1) {
                     return false;
                 }
             }
@@ -67,7 +53,7 @@ class SmartTable extends Component {
     };
 
     render() {
-        const {headers} = this.state;
+        const {headers} = this.props;
         const data = sortBy(this.applyFilters(this.props.data || []), this.state.orderBy, this.state.order);
 
         return (
@@ -76,12 +62,20 @@ class SmartTable extends Component {
                 <TableHeader headers={headers} changeOrder={this.handleChangeOrder}/>
                 </thead>
                 <tbody>
+                {data.length > 0 &&
                 <tr>
                     {headers.map((header, idx) => <td key={idx}><FilterInput handleFilterChange={this.handleFilerChange}
                                                                              id={header}
                                                                              value={this.state.filters[header]}/></td>)}
+                </tr>}
+                {data.map((record, idx) => <TableRow key={idx} items={headers.map(header => record[header])}/>)}
+
+                {data.length === 0 &&
+                <tr>
+                    <td colSpan={headers.length} style={{textAlign: 'center'}}><h1>No data</h1></td>
                 </tr>
-                {data.map((record, idx) => <TableRow key={idx} record={record}/>)}
+                }
+
                 </tbody>
             </table>
         );
@@ -90,7 +84,7 @@ class SmartTable extends Component {
 
 SmartTable.propTypes = {
     data: PropTypes.array,
-    skip: PropTypes.array
+    headers: PropTypes.array.isRequired
 };
 
 export default SmartTable;

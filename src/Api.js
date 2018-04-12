@@ -2,8 +2,8 @@ import axios from 'axios'
 import {timestampToDate} from "./utils/formatters";
 
 class Api {
-    static URL = window.location.protocol + '//' + window.location.host;
-
+    //TODO static URL = window.location.protocol + '//' + window.location.host;
+    static URL = 'http://localhost:3000';
     static getUsers() {
         return Api._get('/helper/users').then((users) => {
             users = users || {};

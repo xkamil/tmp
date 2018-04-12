@@ -70,7 +70,7 @@ class Logs extends Component {
                     <button className="btn btn-danger"
                           onClick={this.handleClearLogs}>Clear</button>
                 </ButtonBar>
-                <SmartTable data={logs}/>
+                <SmartTable data={logs} headers={['code','method','path','request_body','request_headers','response_body','response_headers','created_at']}/>
             </div>
         );
     }

@@ -1,6 +1,6 @@
 const DEFAULT_CONFIGURATION = {
-    access_token_expiration_time: 40,
-    refresh_token_expiration_time: 60,
+    access_token_expiration_time: 4000,
+    refresh_token_expiration_time: 6000,
     authorization_code_expiration_time: 60,
     client_id: "TEST_CLIENT_ID",
     client_secret: "TEST_CLIENT_SECRET",

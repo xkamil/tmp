@@ -26,6 +26,8 @@ server.use(bodyParser.urlencoded({extended: false}));
 server.use(corsMid);
 server.use(recordLogsMid);
 server.use((req, res, next) => {
+    res.json.bind(res);
+    res.status.bind(res);
     req.currentDate = new Date();
     next();
 });
@@ -33,43 +35,42 @@ server.use((req, res, next) => {
 // OAUTH2 ROUTES --------------------------------------------------
 
 // grant type = password
-server.post('/oauth/token', [handleGrantTypeMid('password'), validateClientIdMid, validateClientSecretMid, validateUserCredentialsMid], (req, res) => {
+server.post('/oauth/token', [handleGrantTypeMid('password'), validateClientIdMid, validateClientSecretMid, validateUserCredentialsMid], (req, res, next) => {
+    const args = [req.currentDate, 'password', req.body.username.toLowerCase(), req.body.scope];
     let accessToken;
 
-    createAccessToken(req.currentDate, 'password', req.body.username.toLowerCase(), req.body.scope)
-        .then(({token})=>accessToken = token)
-        .then(()=>createRefreshToken(req.currentDate, 'password', req.body.username.toLowerCase(), req.body.scope))
-        .then(({token}) => {
-            res.json({
-                access_token: accessToken,
-                token_type: "bearer",
-                expires_in: configuration.get().access_token_expiration_time,
-                refresh_token: token
-            });
-        })
-        .catch(err => res.status(500).json({message: err}))
+    createAccessToken(...args)
+        .then(token => accessToken = token)
+        .then(() => createRefreshToken(...args))
+        .then(token => res.json({
+            access_token: accessToken,
+            token_type: "bearer",
+            expires_in: configuration.get().access_token_expiration_time,
+            refresh_token: token
+        }))
+        .catch(next)
 });
 
 // grant type = refresh_token
-server.post('/oauth/token', [handleGrantTypeMid('refresh_token'), validateClientIdMid, validateClientSecretMid, validateRefreshTokenMid], (req, res) => {
+server.post('/oauth/token', [handleGrantTypeMid('refresh_token'), validateClientIdMid, validateClientSecretMid, validateRefreshTokenMid], (req, res, next) => {
     createAccessToken(req.currentDate, 'refresh_token', req.tokenInfo.user_id, req.tokenInfo.scope)
-        .then(accessToken => ({
-            access_token: accessToken.token,
+        .then(token => res.json({
+            access_token: token,
             token_type: "bearer",
             expires_in: configuration.get().access_token_expiration_time
         }))
-        .then(body => res.json(body))
-        .catch(err => res.status(500).json({message: err}))
+        .catch(next)
 });
 
 // grant type = authorization_code
-server.post('/oauth/token', [handleGrantTypeMid('authorization_code'), validateClientIdMid], (req, res) => {
+server.post('/oauth/token', [handleGrantTypeMid('authorization_code'), validateClientIdMid], (req, res, next) => {
     validateAuthorizationCode(req.body.code, req.body.redirect_uri, req.body.code_verifier)
         .then(generateSuccessfulAuthorizationCodeGrantResponse)
         .then(response => res.status(response.code).json(response.body))
-        .catch(err => err)
+        .catch(next)
 });
 
+// invalid grant type
 server.post('/oauth/token', [validateClientIdMid], (req, res) => {
     res.status(400).json(req.body.grant_type ? RESPONSES.INVALID_GRANT.body : RESPONSES.MISSING_PARAM_GRANT_TYPE.body)
 });
@@ -84,10 +85,10 @@ server.get('/oauth/tokeninfo', validateAuthorizationHeaderMid, (req, res) => {
         expires_in
     };
 
-    res.status(200).json(response);
+    res.json(response);
 });
 
-server.get('/oauth/userinfo', validateAuthorizationHeaderMid, (req, res) => {
+server.get('/oauth/userinfo', validateAuthorizationHeaderMid, (req, res, next) => {
     const username = req.tokenInfo.user_id;
 
     return User.findOne({username})
@@ -96,8 +97,8 @@ server.get('/oauth/userinfo', validateAuthorizationHeaderMid, (req, res) => {
             Object.keys(user.scopes).forEach(scope => Object.assign(info, user.scopes[scope]));
             return info;
         })
-        .then(userinfo => res.status(200).json(userinfo))
-        .catch(err => res.status(500).json({message: err}));
+        .then(res.json)
+        .catch(next);
 });
 
 // OPENID ROUTES
@@ -137,33 +138,24 @@ server.get('/openid/generate_code/:userId', (req, res) => {
     res.redirect(url);
 });
 
-server.use(app.static('./server/public'));
-server.use(app.static('build'));
-
 // HELPER ROUTES --------------------------------------------------
 
-server.get('/helper/clear', (req, res) => {
+server.get('/helper/clear', (req, res, next) => {
     Token.remove({})
         .then(() => {
             authorization_codes = [];
             attributes = {};
             res.send('All successfully removed');
         })
-        .catch(err => res.status(500).json({message: err}));
+        .catch(next);
 });
 
-server.get('/helper/users', (req, res) => {
-    User.find({})
-        .then(users => res.json(users))
-        .catch(err => res.status(500).json({message: err}));
+server.get('/helper/users', (req, res, next) => {
+    User.find({}).then(res.json).catch(next);
 });
 
-server.get('/helper/tokens/:type', (req, res) => {
-    const type = req.params.type;
-
-    Token.find({type})
-        .then(tokens => res.json(tokens))
-        .catch(err => res.status(500).json({message: err}));
+server.get('/helper/tokens/:type', (req, res, next) => {
+    Token.find({type: req.params.type}).then(res.json).catch(next);
 });
 
 server.get('/helper/configuration', (req, res) => {
@@ -178,24 +170,26 @@ server.get('/helper/resetConfiguration', (req, res) => {
     res.json(configuration.reset());
 });
 
-server.get('/helper/logs', (req, res) => {
-    Log.find({})
-        .then(logs => res.json(logs))
-        .catch(err => res.json({message: err}));
+server.get('/helper/logs', (req, res, next) => {
+    Log.find({}).then(res.json).catch(next);
 });
 
-server.delete('/helper/logs', (req, res) => {
-    Log.remove({})
-        .then(() => res.send('OK'))
-        .catch(err => res.json({message: err}));
+server.delete('/helper/logs', (req, res, next) => {
+    Log.remove({}).then(res.send).catch(next);
 });
 
-server.get('/helper/expire_tokens/:type', (req, res) => {
-    const type = req.params.type;
-    expireTokens(type)
-        .then(tokens => res.json(tokens))
-        .catch(err => res.status(500).json({message: err}));
+server.get('/helper/expire_tokens/:type', (req, res, next) => {
+    expireTokens(req.params.type).then(res.json).catch(next);
 });
+
+server.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).send(err.toString());
+});
+
+server.use(app.static('./server/public'));
+server.use(app.static('build'));
+server.use('*', app.static('build'));
 
 function generateAuthorizationCodeRedirectUri(req) {
     let state = req.query.state;
@@ -245,7 +239,7 @@ function generateSuccessfulAuthorizationCodeGrantResponse(codeInfo) {
 
     let accessToken;
     createAccessToken(req.currentDate, 'authorization_code', codeInfo.user_id.toLowerCase(), codeInfo.scope)
-        .then(({token}) => accessToken = token)
+        .then(token => accessToken = token)
         .then(() => createRefreshToken(req.currentDate, 'authorization_code', codeInfo.user_id.toLowerCase(), codeInfo.scope))
         .then(refreshToken => res.json({
                 access_token: accessToken,
