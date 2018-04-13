@@ -4,11 +4,9 @@ import {timestampToDate} from "./utils/formatters";
 class Api {
     //TODO static URL = window.location.protocol + '//' + window.location.host;
     static URL = 'http://localhost:3000';
+
     static getUsers() {
-        return Api._get('/helper/users').then((users) => {
-            users = users || {};
-            return Object.getOwnPropertyNames(users).map(id => ({id, ...users[id]}));
-        })
+        return Api._get('/helper/users');
     }
 
     static getConfiguration() {

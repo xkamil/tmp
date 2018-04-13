@@ -26,7 +26,7 @@ class Tokens extends Component {
         this.autoRefresh(this.state.autoRefresh);
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         clearInterval(this.interval);
     }
 
@@ -46,7 +46,7 @@ class Tokens extends Component {
             this.interval = setInterval(() => {
                 this.handleFetchTokens();
             }, REFRESH_INTERVAL);
-        }else{
+        } else {
             clearInterval(this.interval);
         }
     };
@@ -55,6 +55,8 @@ class Tokens extends Component {
         const path = this.props.location.pathname;
         const name = path.replace(/.*\//, '');
         const {expireAccessTokens, expireRefreshTokens, expireAllTokens, removeAllTokens} = this.props;
+        const {access_tokens = [], refresh_tokens = []} = this.props;
+        const tokens = [...access_tokens, ...refresh_tokens];
 
         return (
             <div>
@@ -72,7 +74,10 @@ class Tokens extends Component {
                             checked={this.state.autoRefresh}/>
                     </div>
 
-                    <button className="btn btn-primary" disabled={this.state.autoRefresh} onClick={this.handleFetchTokens}>Refresh</button>
+                    <button className="btn btn-primary" disabled={this.state.autoRefresh}
+                            onClick={this.handleFetchTokens}>Refresh
+                    </button>
+
                     <button className="btn btn-warning" onClick={expireAccessTokens}>Expire access tokens</button>
                     <button className="btn btn-warning" onClick={expireRefreshTokens}>Expire refresh tokens</button>
                     <button className="btn btn-warning" onClick={expireAllTokens}>Expire all</button>
@@ -81,7 +86,8 @@ class Tokens extends Component {
                 </ButtonBar>
 
                 <div>
-                    <SmartTable data={this.props.tokens} headers={['type','token','user_id','scope','created_at','expires']}/>
+                    <SmartTable data={tokens}
+                                headers={['type', 'token', 'user_id', 'scope', 'created_at', 'expires']}/>
                 </div>
 
             </div>
@@ -91,8 +97,7 @@ class Tokens extends Component {
 
 const mapStateToProps = (state) => ({
     access_tokens: state.tokens.access_tokens,
-    refresh_tokens: state.tokens.refresh_tokens,
-    tokens: [...state.tokens.refresh_tokens, ...state.tokens.access_tokens]
+    refresh_tokens: state.tokens.refresh_tokens
 });
 
 const mapDispatchToProps = (dispatch) => ({

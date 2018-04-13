@@ -63,10 +63,12 @@ class SmartTable extends Component {
                 </thead>
                 <tbody>
                 {data.length > 0 &&
-                <tr>
-                    {headers.map((header, idx) => <td key={idx}><FilterInput handleFilterChange={this.handleFilerChange}
-                                                                             id={header}
-                                                                             value={this.state.filters[header]}/></td>)}
+                <tr>{headers.map((header, idx) =>
+                    <td key={idx}>
+                        <FilterInput handleFilterChange={this.handleFilerChange}
+                                     id={header}
+                                     value={this.state.filters[header]}/>
+                    </td>)}
                 </tr>}
                 {data.map((record, idx) => <TableRow key={idx} items={headers.map(header => record[header])}/>)}
 

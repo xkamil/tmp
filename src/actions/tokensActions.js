@@ -20,12 +20,17 @@ export const updateAllTokens = (tokens, error) => ({
     error
 });
 
-export const fetchAccessTokens = () => {
+export const fetchAccessTokens = (onSuccess, onFailure) => {
     return (dispatch, getState, api) => {
-        return api.getAccessTokens().then(
-            tokens => dispatch(updateAccessTokens(tokens)),
-            error => dispatch(updateAccessTokens(null, error))
-        );
+        return api.getAccessTokens()
+            .then(tokens => {
+                    dispatch(updateAccessTokens(tokens));
+                    onSuccess && onSuccess();
+                },
+            ).catch(error => {
+                dispatch(updateAccessTokens(null, error));
+                onFailure && onFailure();
+            })
     }
 };
 
@@ -38,12 +43,17 @@ export const fetchRefreshTokens = () => {
     }
 };
 
-export const expireRefreshTokens = () => {
+export const expireRefreshTokens = (onSuccess, onFailure) => {
     return (dispatch, getState, api) => {
-        return api.expireRefreshTokens().then(
-            tokens => dispatch(updateRefreshTokens(tokens)),
-            error => dispatch(updateRefreshTokens(null, error))
-        );
+        return api.expireRefreshTokens()
+            .then(tokens => {
+                dispatch(updateRefreshTokens(tokens));
+                onSuccess && onSuccess();
+            })
+            .catch(error => {
+                dispatch(updateRefreshTokens(null, error));
+                onFailure && onFailure();
+            })
     }
 };
 

@@ -2,6 +2,8 @@ const urlencode = require('urlencode');
 const crypto = require('crypto');
 const configuration = require('./configuration');
 const Token = require('./models/Token');
+const User = require('./models/User');
+const defaultUsers = require('./data/users.json');
 
 function generateToken(length) {
     let text = "";
@@ -74,6 +76,22 @@ function expireTokens(type) {
     return Token.update(query, {expires: currentDate}, {multi: true});
 }
 
+function addDefaultUsers() {
+    User.find({})
+        .then((users, err) => {
+            if (!err && users && users.length === 0) {
+                console.log('No users in database - adding default users.');
+                Object.keys(defaultUsers).forEach(username => {
+                    new User({
+                        username,
+                        password: defaultUsers[username].password,
+                        scopes: defaultUsers[username].scopes
+                    }).save();
+                })
+            }
+        })
+}
+
 module.exports = {
     createCodeChallenge,
     generateToken,
@@ -81,7 +99,8 @@ module.exports = {
     sha256,
     createAccessToken,
     createRefreshToken,
-    expireTokens
+    expireTokens,
+    addDefaultUsers
 };
 
 

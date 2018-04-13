@@ -3,7 +3,7 @@ const {
     validateAuthorizationHeaderMid, validateUserCredentialsMid, recordLogsMid, corsMid
 } = require("./middlewares");
 const {
-    mapObjectToQueryString, createCodeChallenge, generateToken, createAccessToken, createRefreshToken, expireTokens
+    mapObjectToQueryString, createCodeChallenge, generateToken, createAccessToken, createRefreshToken, expireTokens, addDefaultUsers
 } = require('./utils');
 const configuration = require('./configuration');
 const server = require('express')();
@@ -19,6 +19,7 @@ const Log = require('./models/Log');
 
 mongoose.connect("mongodb://127.0.0.1/my_database");
 
+addDefaultUsers();
 let authorization_codes = [];
 
 server.use(bodyParser.json());

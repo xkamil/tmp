@@ -1,35 +1,86 @@
 {
-  "admin": {
-    "password": "pegasys1+",
+  "user1": {
+    "password": "rule",
     "scopes": {
       "none": {
         "sub": "d053cc8f0e9d3347dea7d053cc8f0e9d"
       },
       "email": {
-        "email": "Raghuram.Ettaboina@in.pega.com"
+        "email": "user1@pega.com"
       },
       "profile": {
-        "website": "Raghuram.Ettaboina@in.pega.com",
-        "nickname": "admin",
-        "preferred_username": "admin",
-        "family_name": "admin"
+        "website": "user1.pega.com",
+        "nickname": "user1",
+        "preferred_username": "user1",
+        "family_name": "user1"
       }
     }
   },
-  "kamil": {
-    "password": "pegasys1+",
+  "user2": {
+    "password": "rule",
     "scopes": {
       "none": {
         "sub": "d053cc8f0e9d3347dea7d053cc8f0e9d"
       },
       "email": {
-        "email": "kamil.wrobel@pega.com"
+        "email": "user2@pega.com"
       },
       "profile": {
-        "website": "kamil.wrobel@pega.com",
-        "nickname": "kamil",
-        "preferred_username": "kamil",
-        "family_name": "kamil"
+        "website": "user2.pega.com",
+        "nickname": "user2",
+        "preferred_username": "user2",
+        "family_name": "user2"
+      }
+    }
+  },
+  "user3": {
+    "password": "rule",
+    "scopes": {
+      "none": {
+        "sub": "d053cc8f0e9d3347dea7d053cc8f0e9d"
+      },
+      "email": {
+        "email": "user3@pega.com"
+      },
+      "profile": {
+        "website": "user3.pega.com",
+        "nickname": "user3",
+        "preferred_username": "user3",
+        "family_name": "user3"
+      }
+    }
+  },
+  "user.on": {
+    "password": "rules1",
+    "scopes": {
+      "none": {
+        "sub": "d053cc8f0e9d3347dea7d053cc8f0e9d"
+      },
+      "email": {
+        "email": "user.on"
+      },
+      "profile": {
+        "website": "user.on.pega.com",
+        "nickname": "user.on",
+        "preferred_username": "user.on",
+        "family_name": "user.on"
+      }
+    }
+  },
+  "user.off": {
+    "password": "rules1",
+    "scopes": {
+      "none": {
+        "sub": "d053cc8f0e9d3347dea7d053cc8f0e9d"
+      },
+      "email": {
+        "email": "user.off"
+      },
+      "profile": {
+        "website": "user.off.pega.com",
+        "nickname": "user.off",
+        "preferred_username": "user.off",
+        "family_name": "user.off"
       }
     }
   }
